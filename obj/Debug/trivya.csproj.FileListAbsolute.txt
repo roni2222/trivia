@@ -1,0 +1,9 @@
+D:\___לימודים___\projects\trivya\bin\trivya.dll.config
+D:\___לימודים___\projects\trivya\bin\trivya.dll
+D:\___לימודים___\projects\trivya\bin\trivya.pdb
+D:\___לימודים___\projects\trivya\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\___לימודים___\projects\trivya\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\___לימודים___\projects\trivya\obj\Debug\trivya.csprojResolveAssemblyReference.cache
+D:\___לימודים___\projects\trivya\obj\Debug\trivya.csproj.CoreCompileInputs.cache
+D:\___לימודים___\projects\trivya\obj\Debug\trivya.dll
+D:\___לימודים___\projects\trivya\obj\Debug\trivya.pdb
