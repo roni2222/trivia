@@ -335,7 +335,7 @@
                     onTimesUp();
 
                     if (triviaArray[counter][5] == answerNumber) { //תשובה נכונה
-                        $('#answer' + answerNumber).css('background-color', '#00FFFF');
+                        $('#answer' + answerNumber).css('background-color', '#00ff99');
                         rightAnswer++;
                     }
                     else { //תשובה שגויה
@@ -343,7 +343,7 @@
                         //ברגע שלוחצים על תשובה לא נכונה יסמן את התשובה הנכונה בנוסף
                         //שמתי את זה בתוך השהייה של שניה 
                         setTimeout(function () {
-                            $('#answer' + triviaArray[counter][5]).css('background-color', '#33cc33');
+                            $('#answer' + triviaArray[counter][5]).css('background-color', '#66ff33');
                         }, 800);
                     }
                     isAnsersClicked = true;
