@@ -279,7 +279,16 @@
                 if (counter < triviaArray.length - 1)
                     counter++;
                 else
-                    alert("נגמר המשחק");
+                {
+                    $("#triviaDiv").hide(); 
+                    $("#timerTable").hide();
+                    $("#gameOver").show();
+                    $("#totalRight").show();
+                    $("#totalWrong").show();
+                    $('#totalRight').text('תשובות נכונות: ' + rightAnswer);
+                    $('#totalWrong').text('תשובות שגויות: ' + wrongAnswer);
+                    $('#imgConfetti').show();
+                }
 
                 //מחיקת צבע הרקע של כל התשובות והחזרת צבע הטקסט ללבן
                 $('#answer1').css('background-color', 'transparent');
@@ -369,76 +378,8 @@
 
             trivia();            
 
-            //$("#stopTimer").click(function () {
-            //    onTimesUp();
-            //});
         });
 
-        /*
-        //מערך של כל השאלות והתשובות שבסוף כל שורה כתבתי את מספר התשובה הנכונה
-        var triviaArray = [
-            ["איך נקרא חיל האוויר בהתחלה?", "יחידת השחקים", "שירות האוויר", "כוח האוויר", "חיל האוויר", 2],
-            ["מה היה מטוס הקרב הראשון של חיל האוויר?", "מוסטנג", "ספיטפייר", "אוויה", "B-17", 3],
-            ["מתי נפלה הממשלה בגלל מטוסי חיל האוויר שהגיעו בשבת?", "1977", "1978", "1976", "1982", 3],
-            ["מי היתה הטייסת הראשונה בצהל?", "יעל רום", "תמר אריאל", "רוני צוקרמן", "אליס מילר", 1],
-            ["מתי נפתח מחזור הגיוס הראשון שבו נשים גוייסו למערך הלחימה בההגנה האווירית?", "1990", "1998", "1986", "1982", 2],
-            ["מיהו בסיס חיל האוויר הראשון?", "פלמחים", "חצור", "עובדה", "חצרים", 4],
-            ["מיהו נשיא מדינת ישראל שהיה בעברו טייס?", "עזר ויצמן", "יצחק בן צבי", "יצחק נבון", "משה קצב", 1],
-            ["מה מופיע בסמל חיל האוויר?", "יונה, עלה של זית, כוכב, חרב", "מגן דוד, כנפיים, חרב, יונה", "מטוס, עלה של זית, יונה", "חרב, כנפיים, עלה של זית, כוכב", 4]
-        ];
-
-        var counter = -1;
-        var wrongAnswer = 0;
-        var rightAnswer = 0;
-        var isAnsersClicked = false;
-
-        function trivia() {
-            isAnsersClicked = false; //משנה את המשתנה של האם נלחצה תשובה לפני כן בכל שאלה חדשה
-            wrongAnswer = triviaArray.length - rightAnswer // מספר התשובות השגויות
-
-            if (counter < triviaArray.length-1)
-                counter++;
-            else
-                alert("נגמר המשחק");
-
-            //מחיקת צבע הרקע של כל התשובות
-            $('#answer1').css('background-color', 'transparent');
-            $('#answer2').css('background-color', 'transparent');
-            $('#answer3').css('background-color', 'transparent');
-            $('#answer4').css('background-color', 'transparent');
-
-            //הגדרת השאלה הבאה והתשובות לפי השורה הבאה במערך
-            $('#question').text(triviaArray[counter][0]);
-            $('#answer1').text(triviaArray[counter][1]);
-            $('#answer2').text(triviaArray[counter][2]);
-            $('#answer3').text(triviaArray[counter][3]);
-            $('#answer4').text(triviaArray[counter][4]);
-            ///startTimer();
-        }
-
-        $(document).ready(function () {
-            trivia();
-        }); 
-
-        function checkAnswer(answerNumber) //פונקציה שבודקת האם התשובה נכונה או שגויה ובהתאם משנה את צבע הרקע
-        {
-            if (!isAnsersClicked) { //הוספתי את התנאי הזה- משתנה שבעזרתו בדקתי האם לחצתי על תשובה לפני בהתחלה הוא פולס ואז נכנסים ללואה ומשתנה לטרו ואז ככה לא יכנס יותר לתנאי כדי שלא יוכלו ללחוץ על עוד כפתורים וישתנו עוד צבעים של תשובות אחרות
-                if (triviaArray[counter][5] == answerNumber) { //תשובה נכונה
-                    $('#answer' + answerNumber).css('background-color', '#33cc33');
-                    rightAnswer++;
-                }
-                else { //תשובה שגויה
-                    $('#answer' + answerNumber).css('background-color', '#ff3333');
-                    //ברגע שלוחצים על תשובה לא נכונה יסמן את התשובה הנכונה בנוסף
-                    //שמתי את זה בתוך השהייה של שניה 
-                    setTimeout(function () {
-                        $('#answer' + triviaArray[counter][5]).css('background-color', '#33cc33');
-                    }, 1000);
-                }
-                isAnsersClicked = true;
-            }
-        }
-        */
     </script>
 
 </head>
@@ -446,10 +387,10 @@
 <body>
     <div style="font-family:habibi-regular-fm; font-size:32px; display:inline; text-align:center; display:block;">חידון יום חיל האוויר</div>
     <br />
-    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;" id="timerTable">
         <tr><td align="center"><div id="timer"></div></td></tr>
     </table>
-    <div>
+    <div id="triviaDiv">
         <div id="question" style="text-align:center; font-size:24px;"></div>
         <br />
         <div class="roundcorners" id="answer1" answerNumber="1" style="text-align:center;"></div>
@@ -462,6 +403,10 @@
         <br />
         <button id="nextQuestion" class="button" style="display:none;">לשאלה הבאה</button>
     </div>
+    <div id="gameOver" style="display:none; font-size:50px; text-align:center;">סיימת את חידון יום חיל האוויר</div>
+    <div id="totalRight" style="display:none; font-size:40px;"></div>
+    <div id="totalWrong" style="display:none; font-size:40px;"></div>
+    <img id="imgConfetti" src="images/confetti.gif" width="200" style="display:none;" />
 </body>
 
 </html>
