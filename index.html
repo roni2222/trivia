@@ -11,16 +11,43 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css"> <!-- סי אס אס של ג'ייק'רי יואיי, תמיד נשתמש בזה עוזר לאפקטים גם הוא קובץ אחד ויחיד לפי גרסה-->
 
     <style>
+        /*הוספת פונטים שהורדתי למחשב*/
+        @font-face {
+            font-family: "Felix007 Medium Regular";
+            src: url("fonts/Felix007 Medium Regular.ttf");
+        }
+
+        .Font {
+            font-family: "Felix007 Medium Regular";
+        }
+
+        @font-face {
+            font-family: "habibi-regular-fm";
+            src: url("fonts/habibi-regular-fm.ttf");
+        }
+
+        .Font {
+            font-family: "habibi-regular-fm";
+        }
 
         body {
-            /*font-family: sans-serif;*/
             /*display: grid;*/
             /*height: 100vh;*/
             /*place-items: center;*/
-            background-color: black;
             color: white;
+            font-family: 'Felix007 Medium Regular';
+            font-size: 20px;
+            direction: rtl;
         }
 
+        html {
+            min-height: 100%;
+            background-image: url(images/background.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+        }
         /*טיימר*/
         .base-timer {
             position: relative;
@@ -78,9 +105,9 @@
         /*מסגרת עגולה לדיב*/
         .roundcorners {
             border-radius: 25px;
-            border: 4px solid #9ffd32;
+            border: 4px solid #00FFFF;
             padding: 20px;
-            width: 20px;
+            width: 100px;
             height: auto;
         }
 
@@ -103,153 +130,282 @@
 
     <script>
         $(document).ready(function () {
+
+
+            //מערך של כל השאלות והתשובות שבסוף כל שורה כתבתי את מספר התשובה הנכונה
+            var triviaArray = [
+                ["איך נקרא חיל האוויר בהתחלה?", "יחידת השחקים", "שירות האוויר", "כוח האוויר", "חיל האוויר", 2],
+                ["מה היה מטוס הקרב הראשון של חיל האוויר?", "מוסטנג", "ספיטפייר", "אוויה", "B-17", 3],
+                ["מתי נפלה הממשלה בגלל מטוסי חיל האוויר שהגיעו בשבת?", "1977", "1978", "1976", "1982", 3],
+                ["מי היתה הטייסת הראשונה בצהל?", "יעל רום", "תמר אריאל", "רוני צוקרמן", "אליס מילר", 1],
+                ["מתי נפתח מחזור הגיוס הראשון שבו נשים גוייסו למערך הלחימה בההגנה האווירית?", "1990", "1998", "1986", "1982", 2],
+                ["מיהו בסיס חיל האוויר הראשון?", "פלמחים", "חצור", "עובדה", "חצרים", 4],
+                ["מיהו נשיא מדינת ישראל שהיה בעברו טייס?", "עזר ויצמן", "יצחק בן צבי", "יצחק נבון", "משה קצב", 1],
+                ["מה מופיע בסמל חיל האוויר?", "יונה, עלה של זית, כוכב, חרב", "מגן דוד, כנפיים, חרב, יונה", "מטוס, עלה של זית, יונה", "חרב, כנפיים, עלה של זית, כוכב", 4]
+            ];
+
+            var counter = -1;
+            var wrongAnswer = 0;
+            var rightAnswer = 0;
+            var isAnsersClicked = false;
+
+
+            //הקוד של הטיימר
             //timer- /*https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/*/
-        const FULL_DASH_ARRAY = 283;
-        const WARNING_THRESHOLD = 10;
-        const ALERT_THRESHOLD = 5;
+            const FULL_DASH_ARRAY = 283;
+            const WARNING_THRESHOLD = 10;
+            const ALERT_THRESHOLD = 5;
 
-        const COLOR_CODES = {
-            info: {
-                color: "green"
-            },
-            warning: {
-                color: "orange",
-                threshold: WARNING_THRESHOLD
-            },
-            alert: {
-                color: "red",
-                threshold: ALERT_THRESHOLD
-            }
-        };
-
-        const TIME_LIMIT = 20;
-        let timePassed = 0;
-        let timeLeft = TIME_LIMIT;
-        let timerInterval = null;
-        let remainingPathColor = COLOR_CODES.info.color;
-
-        document.getElementById("timer").innerHTML = `
-<div class="base-timer">
-  <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <g class="base-timer__circle">
-      <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
-      <path
-        id="base-timer-path-remaining"
-        stroke-dasharray="283"
-        class="base-timer__path-remaining ${remainingPathColor}"
-        d="
-          M 50, 50
-          m -45, 0
-          a 45,45 0 1,0 90,0
-          a 45,45 0 1,0 -90,0
-        "
-      ></path>
-    </g>
-  </svg>
-  <span id="base-timer-label" class="base-timer__label">${formatTime(
-                timeLeft
-            )}</span>
-</div>
-`;
-
-        startTimer();
-
-        function onTimesUp() {
-            clearInterval(timerInterval);
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                timePassed = timePassed += 1;
-                timeLeft = TIME_LIMIT - timePassed;
-                document.getElementById("base-timer-label").innerHTML = formatTime(
-                    timeLeft
-                );
-                setCircleDasharray();
-                setRemainingPathColor(timeLeft);
-
-                if (timeLeft === 0) {
-                    onTimesUp();
+            const COLOR_CODES = {
+                info: {
+                    color: "green"
+                },
+                warning: {
+                    color: "orange",
+                    threshold: WARNING_THRESHOLD
+                },
+                alert: {
+                    color: "red",
+                    threshold: ALERT_THRESHOLD
                 }
-            }, 1000);
-        }
+            };
 
-        function formatTime(time) {
-            const minutes = Math.floor(time / 60);
-            let seconds = time % 60;
+            const TIME_LIMIT = 8;
+            let timePassed = 0;
+            let timeLeft = TIME_LIMIT;
+            let timerInterval = null;
+            let remainingPathColor = COLOR_CODES.info.color;
 
-            if (seconds < 10) {
-                seconds = `0${seconds}`;
+            document.getElementById("timer").innerHTML = `
+                <div class="base-timer">
+                  <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g class="base-timer__circle">
+                      <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                      <path
+                        id="base-timer-path-remaining"
+                        stroke-dasharray="283"
+                        class="base-timer__path-remaining ${remainingPathColor}"
+                        d="
+                          M 50, 50
+                          m -45, 0
+                          a 45,45 0 1,0 90,0
+                          a 45,45 0 1,0 -90,0
+                        "
+                      ></path>
+                    </g>
+                  </svg>
+                  <span id="base-timer-label" class="base-timer__label">${formatTime(
+                                timeLeft
+                            )}</span>
+                </div>
+                `;
+
+            startTimer();
+
+            function onTimesUp() {
+                clearInterval(timerInterval);
             }
 
-            return `${minutes}:${seconds}`;
-        }
+            function startTimer() {
+                timerInterval = setInterval(() => {
+                    timePassed = timePassed += 1;
+                    timeLeft = TIME_LIMIT - timePassed;
+                    document.getElementById("base-timer-label").innerHTML = formatTime(
+                        timeLeft
+                    );
+                    setCircleDasharray();
+                    setRemainingPathColor(timeLeft);
 
-        function setRemainingPathColor(timeLeft) {
-            const { alert, warning, info } = COLOR_CODES;
-            if (timeLeft <= alert.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(warning.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(alert.color);
-            } else if (timeLeft <= warning.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(info.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(warning.color);
+                    if (timeLeft === 0) {
+                        onTimesUp();
+                        $('#answer' + triviaArray[counter][5]).css('background-color', '#33cc33');
+                        isAnsersClicked = true;
+                        $("#nextQuestion").show(); 
+                    }
+                }, 1000);
             }
-        }
 
-        function calculateTimeFraction() {
-            const rawTimeFraction = timeLeft / TIME_LIMIT;
-            return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
-        }
+            function formatTime(time) {
+                const minutes = Math.floor(time / 60);
+                let seconds = time % 60;
 
-        function setCircleDasharray() {
-            const circleDasharray = `${(
-                calculateTimeFraction() * FULL_DASH_ARRAY
-            ).toFixed(0)} 283`;
-            document
-                .getElementById("base-timer-path-remaining")
-                .setAttribute("stroke-dasharray", circleDasharray);
-        }
+                if (seconds < 10) {
+                    seconds = `0${seconds}`;
+                }
+
+                return `${minutes}:${seconds}`;
+            }
+
+            function setRemainingPathColor(timeLeft) {
+                const { alert, warning, info } = COLOR_CODES;
+                if (timeLeft <= alert.threshold) {
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.remove(warning.color);
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(alert.color);
+                } else if (timeLeft <= warning.threshold) {
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.remove(info.color);
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(warning.color);
+                }
+            }
+
+            function calculateTimeFraction() {
+                const rawTimeFraction = timeLeft / TIME_LIMIT;
+                return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+            }
+
+            function setCircleDasharray() {
+                const circleDasharray = `${(
+                    calculateTimeFraction() * FULL_DASH_ARRAY
+                ).toFixed(0)} 283`;
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .setAttribute("stroke-dasharray", circleDasharray);
+            }
+
+            //הקוד שלי
+            function trivia() {
+                $("#nextQuestion").hide(); 
+                isAnsersClicked = false; //משנה את המשתנה של האם נלחצה תשובה לפני כן בכל שאלה חדשה
+                wrongAnswer = triviaArray.length - rightAnswer // מספר התשובות השגויות
+
+                if (counter < triviaArray.length - 1)
+                    counter++;
+                else
+                    alert("נגמר המשחק");
+
+                //מחיקת צבע הרקע של כל התשובות
+                $('#answer1').css('background-color', 'transparent');
+                $('#answer2').css('background-color', 'transparent');
+                $('#answer3').css('background-color', 'transparent');
+                $('#answer4').css('background-color', 'transparent');
+
+                //הגדרת השאלה הבאה והתשובות לפי השורה הבאה במערך
+                $('#question').text(triviaArray[counter][0]);
+                $('#answer1').text(triviaArray[counter][1]);
+                $('#answer2').text(triviaArray[counter][2]);
+                $('#answer3').text(triviaArray[counter][3]);
+                $('#answer4').text(triviaArray[counter][4]);
+
+                 //הקוד של הטיימר
+                if (counter > 0) {
+                    timePassed = 0;
+                    timeLeft = TIME_LIMIT;
+                    timerInterval = null;
+                    remainingPathColor = COLOR_CODES.info.color;
+
+                    document.getElementById("timer").innerHTML = `
+                    <div class="base-timer">
+                      <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <g class="base-timer__circle">
+                          <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                          <path
+                            id="base-timer-path-remaining"
+                            stroke-dasharray="283"
+                            class="base-timer__path-remaining ${remainingPathColor}"
+                            d="
+                              M 50, 50
+                              m -45, 0
+                              a 45,45 0 1,0 90,0
+                              a 45,45 0 1,0 -90,0
+                            "
+                          ></path>
+                        </g>
+                      </svg>
+                      <span id="base-timer-label" class="base-timer__label">${formatTime(
+                                timeLeft
+                            )}</span>
+                        </div>
+                        `;
+
+                    startTimer();
+                }
+                
+            }
+
+            function checkAnswer(answerNumber) //פונקציה שבודקת האם התשובה נכונה או שגויה ובהתאם משנה את צבע הרקע
+            {                
+                if (!isAnsersClicked) { //הוספתי את התנאי הזה- משתנה שבעזרתו בדקתי האם לחצתי על תשובה לפני בהתחלה הוא פולס ואז נכנסים ללואה ומשתנה לטרו ואז ככה לא יכנס יותר לתנאי כדי שלא יוכלו ללחוץ על עוד כפתורים וישתנו עוד צבעים של תשובות אחרות
+                    onTimesUp();
+
+                    if (triviaArray[counter][5] == answerNumber) { //תשובה נכונה
+                        $('#answer' + answerNumber).css('background-color', '#33cc33');
+                        rightAnswer++;
+                    }
+                    else { //תשובה שגויה
+                        $('#answer' + answerNumber).css('background-color', '#ff3333');
+                        //ברגע שלוחצים על תשובה לא נכונה יסמן את התשובה הנכונה בנוסף
+                        //שמתי את זה בתוך השהייה של שניה 
+                        setTimeout(function () {
+                            $('#answer' + triviaArray[counter][5]).css('background-color', '#33cc33');
+                        }, 800);
+                    }
+                    isAnsersClicked = true;
+                    $("#nextQuestion").show();  
+                }
+            }
+
+            $(".roundcorners").click(function () {
+                checkAnswer($(this).attr("answerNumber"));
+            });
+
+            $("#nextQuestion").click(function () {
+                trivia();
+            });
+
+            trivia();            
+
+            //$("#stopTimer").click(function () {
+            //    onTimesUp();
+            //});
         });
 
+        /*
         //מערך של כל השאלות והתשובות שבסוף כל שורה כתבתי את מספר התשובה הנכונה
         var triviaArray = [
-            ["1שאלה", "היי", "ביי", "שלום", "להתראות", 1],
-            ["שאלה2", "11", "22", "33", "44", 2],
-            ["3שאלה", "1", "2", "3", "444", 3],
-            ["שאלה4", "1", "2", "3", "4", 4]
+            ["איך נקרא חיל האוויר בהתחלה?", "יחידת השחקים", "שירות האוויר", "כוח האוויר", "חיל האוויר", 2],
+            ["מה היה מטוס הקרב הראשון של חיל האוויר?", "מוסטנג", "ספיטפייר", "אוויה", "B-17", 3],
+            ["מתי נפלה הממשלה בגלל מטוסי חיל האוויר שהגיעו בשבת?", "1977", "1978", "1976", "1982", 3],
+            ["מי היתה הטייסת הראשונה בצהל?", "יעל רום", "תמר אריאל", "רוני צוקרמן", "אליס מילר", 1],
+            ["מתי נפתח מחזור הגיוס הראשון שבו נשים גוייסו למערך הלחימה בההגנה האווירית?", "1990", "1998", "1986", "1982", 2],
+            ["מיהו בסיס חיל האוויר הראשון?", "פלמחים", "חצור", "עובדה", "חצרים", 4],
+            ["מיהו נשיא מדינת ישראל שהיה בעברו טייס?", "עזר ויצמן", "יצחק בן צבי", "יצחק נבון", "משה קצב", 1],
+            ["מה מופיע בסמל חיל האוויר?", "יונה, עלה של זית, כוכב, חרב", "מגן דוד, כנפיים, חרב, יונה", "מטוס, עלה של זית, יונה", "חרב, כנפיים, עלה של זית, כוכב", 4]
         ];
 
-        var counter = 0;
+        var counter = -1;
         var wrongAnswer = 0;
         var rightAnswer = 0;
         var isAnsersClicked = false;
 
         function trivia() {
             isAnsersClicked = false; //משנה את המשתנה של האם נלחצה תשובה לפני כן בכל שאלה חדשה
-            //מחיקת צבע הרקע של כל התשובות  
+            wrongAnswer = triviaArray.length - rightAnswer // מספר התשובות השגויות
+
+            if (counter < triviaArray.length-1)
+                counter++;
+            else
+                alert("נגמר המשחק");
+
+            //מחיקת צבע הרקע של כל התשובות
             $('#answer1').css('background-color', 'transparent');
             $('#answer2').css('background-color', 'transparent');
             $('#answer3').css('background-color', 'transparent');
             $('#answer4').css('background-color', 'transparent');
 
-            //הגדרת השאלה ההבאה והתשובות לפי השורה הבאה במערך
+            //הגדרת השאלה הבאה והתשובות לפי השורה הבאה במערך
             $('#question').text(triviaArray[counter][0]);
             $('#answer1').text(triviaArray[counter][1]);
             $('#answer2').text(triviaArray[counter][2]);
             $('#answer3').text(triviaArray[counter][3]);
             $('#answer4').text(triviaArray[counter][4]);
-            if (counter < triviaArray.length)
-                counter++;
-            else
-                alert("נגמר המשחק");
+            ///startTimer();
         }
 
         $(document).ready(function () {
@@ -259,37 +415,38 @@
         function checkAnswer(answerNumber) //פונקציה שבודקת האם התשובה נכונה או שגויה ובהתאם משנה את צבע הרקע
         {
             if (!isAnsersClicked) { //הוספתי את התנאי הזה- משתנה שבעזרתו בדקתי האם לחצתי על תשובה לפני בהתחלה הוא פולס ואז נכנסים ללואה ומשתנה לטרו ואז ככה לא יכנס יותר לתנאי כדי שלא יוכלו ללחוץ על עוד כפתורים וישתנו עוד צבעים של תשובות אחרות
-                if (triviaArray[counter-1][5] == answerNumber) { //תשובה נכונה
+                if (triviaArray[counter][5] == answerNumber) { //תשובה נכונה
                     $('#answer' + answerNumber).css('background-color', '#33cc33');
                     rightAnswer++;
                 }
                 else { //תשובה שגויה
                     $('#answer' + answerNumber).css('background-color', '#ff3333');
-                    wrongAnswer++;
                     //ברגע שלוחצים על תשובה לא נכונה יסמן את התשובה הנכונה בנוסף
                     //שמתי את זה בתוך השהייה של שניה 
                     setTimeout(function () {
-                        $('#answer' + triviaArray[counter-1][5]).css('background-color', '#33cc33');
+                        $('#answer' + triviaArray[counter][5]).css('background-color', '#33cc33');
                     }, 1000);
                 }
                 isAnsersClicked = true;
             }
         }
-
+        */
     </script>
 
 </head>
 
 <body>
+    <div style="font-family:habibi-regular-fm; font-size:32px; display:inline; text-align:center; display:block;">חידון יום חיל האוויר</div>
     <div id="timer"></div>
     <div id="question"></div>
-    <div class="roundcorners" id="answer1" onclick="checkAnswer(1)"></div>
-    <div class="roundcorners" id="answer2" onclick="checkAnswer(2)"></div>
-    <div class="roundcorners" id="answer3" onclick="checkAnswer(3)"></div>
-    <div class="roundcorners" id="answer4" onclick="checkAnswer(4)"></div>
+    <div class="roundcorners" id="answer1" answerNumber="1"></div>
+    <div class="roundcorners" id="answer2" answerNumber="2"></div>
+    <div class="roundcorners" id="answer3" answerNumber="3"></div>
+    <div class="roundcorners" id="answer4" answerNumber="4"></div>
 
-    <button class="button" onclick="trivia()">לשאלה הבאה</button>
-
+    <button id="nextQuestion" class="button" style="display:none;">לשאלה הבאה</button>
+    <!--<button id="stopTimer" class="button">עצירת שעון</button>-->
+    <!--<img src="images/airplane.gif" width="200" />-->
 </body>
 
 </html>
